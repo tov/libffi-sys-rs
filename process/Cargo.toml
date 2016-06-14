@@ -1,0 +1,22 @@
+[package]
+name = "libffi-sys"
+version = "@VERSION@"
+authors = ["Jesse A. Tov <jesse.tov@gmail.com>"]
+links = "ffi"
+build = "build.rs"
+description = "Raw Rust bindings for libffi"
+repository = "https://github.com/tov/libffi-sys-rs"
+homepage = "https://github.com/tov/libffi-sys-rs"
+documentation = "http://tov.github.io/libffi-rs/"
+readme = "README.md"
+license = "MIT/Apache-2.0"
+keywords = ["ffi", "libffi", "closure", "c"]
+
+[dependencies]
+
+[build-dependencies]
+pkg-config = "0.3.7"
+bindgen = "0.18"
+
+# 0.7.1 is broken, so pinning this here until it's fixed
+clang-sys = "=0.7.0"
