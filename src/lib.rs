@@ -36,7 +36,7 @@
 //! to your `Cargo.toml` and
 //!
 //! ```rust
-//! extern crate libffi;
+//! extern crate libffi_sys;
 //! ```
 //!
 //! to your crate root.
