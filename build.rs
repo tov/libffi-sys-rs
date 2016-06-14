@@ -7,7 +7,15 @@ fn main() {
     let include_path = Path::new("include").join("include_ffi.h");
     let out_path = Path::new("src").join("generated.rs");
 
-    let libffi = pkg_config::probe_library("libffi").expect("libffi");
+    let libffi = pkg_config::probe_library("libffi").expect("
+        **********
+        pkg-config could not find libffi. This could be because you
+        don't have pkg-config, because you don't have libffi, or because
+        they don't know about each other. If you can run `pkg-config
+        libffi --cflags` and get a reasonable result, please file a bug
+        report.
+        **********
+    ");
 
     let mut builder = bindgen::Builder::default();
     builder.header(include_path.display().to_string());
@@ -15,7 +23,11 @@ fn main() {
         builder.clang_arg(format!("-I{}", path.display()));
     }
 
-    let bindings = builder.generate().expect("bindgen generation");
+    let bindings = builder.generate().expect("
+        **********
+        Bindgen generation failed. Please file a bug report.
+        **********
+    ");
     bindings.write_to_file(out_path.display().to_string())
             .expect("bindgen output");
 
