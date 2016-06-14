@@ -35,7 +35,7 @@ Then add
 
 ```toml
 [dependencies]
-libffi-sys = "0.3"
+libffi-sys = "0.3.3"
 ```
 
 to your `Cargo.toml` and
