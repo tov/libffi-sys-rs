@@ -17,6 +17,4 @@ keywords = ["ffi", "libffi", "closure", "c"]
 [build-dependencies]
 pkg-config = "0.3.7"
 bindgen = "0.18"
-
-# 0.7.1 is broken, so pinning this here until it's fixed
-clang-sys = "=0.7.0"
+clang-sys = "0.7.2"
