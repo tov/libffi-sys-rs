@@ -73,7 +73,7 @@ fn main() {
             .expect("bindgen output");
 
     // Cargo linking directives
-    println!("cargo:rustc-link-lib=libffi");
+    println!("cargo:rustc-link-lib=ffi");
     println!("cargo:rustc-link-search={}", libdir.display());
 }
 
