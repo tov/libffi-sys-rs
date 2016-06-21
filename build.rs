@@ -12,7 +12,7 @@ use curl::easy::Easy;
 const LIBFFI_ARCHIVE: &'static str = "libffi.tar.gz";
 const LIBFFI_DIR: &'static str     = "libffi-3.2.1";
 const LIBFFI_URL: &'static str     =
-    "ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz";
+    "http://users.eecs.northwestern.edu/~jesse/libffi-3.2.1.tar.gz";
 
 fn main() {
     let out_dir   = env::var("OUT_DIR").unwrap();
