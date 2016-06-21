@@ -46,7 +46,6 @@ fn main() {
     // Configure, make, make install
     run_command("Configuring libffi",
                 Command::new("./configure")
-                        .arg("--disable-shared")
                         .arg("--prefix")
                         .arg(prefix)
                         .current_dir(&build_dir));
