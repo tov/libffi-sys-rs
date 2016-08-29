@@ -1,56 +1,40 @@
 extern crate bindgen;
-extern crate curl;
+extern crate make_cmd;
 
 use std::env;
-use std::fs::File;
-use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
-use curl::easy::Easy;
+use make_cmd::make;
 
-const LIBFFI_ARCHIVE: &'static str = "libffi.tar.gz";
-const LIBFFI_DIR: &'static str     = "libffi-3.2.1";
-const LIBFFI_URL: &'static str     =
-    "http://users.eecs.northwestern.edu/~jesse/libffi-3.2.1.tar.gz";
+const LIBFFI_DIR: &'static str     = "libffi";
 
 fn main() {
     let out_dir   = env::var("OUT_DIR").unwrap();
 
-    let archive   = Path::new(&out_dir).join(LIBFFI_ARCHIVE);
-    let build_dir = Path::new(&out_dir).join(LIBFFI_DIR);
+    let build_dir = Path::new(LIBFFI_DIR);
     let prefix    = Path::new(&out_dir).join("libffi-root");
     let include   = Path::new(&prefix).join("lib")
                                       .join("libffi-3.2.1")
                                       .join("include");
     let libdir    = Path::new(&prefix).join("lib");
 
-    // Download libffi
-    let mut file  = File::create(&archive).unwrap();
-    let mut curl = Easy::new();
-    curl.url(LIBFFI_URL).unwrap();
-    curl.write_function(move |data| Ok(file.write(data).unwrap())).unwrap();
-    curl.perform().unwrap();
-
     fn run_command(which: &'static str, cmd: &mut Command) {
         assert!(cmd.status().expect(which).success(), which);
     }
 
-    // Untar it.
-    run_command("Untarring libffi",
-                Command::new("tar")
-                        .arg("-zxf")
-                        .arg(LIBFFI_ARCHIVE)
-                        .current_dir(&out_dir));
-
-    // Configure, make, make install
+    // Generate configure, run configure, make, make install
+    run_command("Generating configure",
+                Command::new("./autogen.sh")
+                        .current_dir(&build_dir));
     run_command("Configuring libffi",
                 Command::new("./configure")
+                        .arg("--disable-docs")
                         .arg("--prefix")
                         .arg(prefix)
                         .current_dir(&build_dir));
     run_command("Building libffi",
-                Command::new("make")
+                make()
                         .arg("install")
                         .current_dir(&build_dir));
 
