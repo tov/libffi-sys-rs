@@ -16,4 +16,4 @@ keywords = ["ffi", "libffi", "closure", "c"]
 
 [build-dependencies]
 bindgen = "0.18"
-curl = "0.3.0"
+make-cmd = "0.1"
