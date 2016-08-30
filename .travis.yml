@@ -15,4 +15,4 @@ notifications:
 addons:
   apt:
     packages:
-      - makeinfo
+      - texinfo
