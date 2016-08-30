@@ -12,8 +12,9 @@
 //!
 //! # Usage
 //!
-//! It’s [on crates.io](https://crates.io/crates/libffi-sys), so you can
-//! add
+//! Make sure you have a working make, C compiler, automake, and autoconf
+//! first. It’s [on crates.io](https://crates.io/crates/libffi-sys), so you
+//! can add
 //!
 //! ```toml
 //! [dependencies]
