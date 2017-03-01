@@ -48,6 +48,7 @@ fn main() {
         .clang_arg(format!("-I{}", include.display()))
         .no_unstable_rust()
         .derive_default(true)
+        .hide_type("max_align_t")
         .generate()
         .expect("
         **********
