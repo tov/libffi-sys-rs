@@ -47,6 +47,7 @@ fn main() {
     builder.header(include_file.display().to_string())
         .clang_arg(format!("-I{}", include.display()))
         .no_unstable_rust()
+        .derive_default(true)
         .generate()
         .expect("
         **********
