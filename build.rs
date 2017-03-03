@@ -29,7 +29,6 @@ fn main() {
                 Command::new("./autogen.sh").current_dir(&build_dir));
     run_command("Configuring libffi",
                 Command::new("./configure")
-                    .arg("--disable-docs")
                     .arg("--prefix")
                     .arg(prefix)
                     .current_dir(&build_dir));
