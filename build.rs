@@ -31,6 +31,7 @@ fn main() {
                 Command::new("./configure")
                     .arg("--prefix")
                     .arg(prefix)
+                    .arg("--with-pic")
                     .current_dir(&build_dir));
     run_command("Building libffi",
                 make()
