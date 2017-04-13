@@ -65,8 +65,7 @@ fn main() {
         .generate()
         .expect("
         **********
-        Bindgen generation failed. Please file a bug \
-                 report.
+        Bindgen generation failed. Please file a bug report.
         **********
         ")
         .write_to_file(out_file.display().to_string())
