@@ -18,7 +18,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! libffi-sys = "0.5.0"
+//! libffi-sys = "0.5.2"
 //! ```
 //!
 //! to your `Cargo.toml` and
@@ -29,8 +29,5 @@
 //!
 //! to your crate root.
 
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
-#![allow(non_upper_case_globals)]
-#![allow(improper_ctypes)]
-include!(concat!(env!("OUT_DIR"), "/generated.rs"));
+mod generated;
+pub use generated::*;

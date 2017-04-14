@@ -23,7 +23,7 @@ can add
 
 ```toml
 [dependencies]
-libffi-sys = "0.5.0"
+libffi-sys = "0.5.2"
 ```
 
 to your `Cargo.toml` and
