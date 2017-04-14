@@ -33,10 +33,9 @@ fn main() {
     }
     run_command("Copying libffi into the build directory",
                 Command::new("cp")
-                    .arg("-ar")
+                    .arg("-a")
                     .arg(LIBFFI_DIR)
                     .arg(&build_dir));
-
 
     // Generate configure, run configure, make, make install
     run_command("Generating configure",
