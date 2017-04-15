@@ -17,8 +17,10 @@ higher-level API.
 
 ## Usage
 
-Make sure you have a working make, C compiler, automake, and autoconf
-first. It’s [on crates.io](https://crates.io/crates/libffi-sys), so you
+Building libffi-sys will build the libffi C library [from
+github](https://github.com/libffi/libffi), which requires that you have
+a working make, C compiler, automake, autoconf, and texinfo first.
+It’s [on crates.io](https://crates.io/crates/libffi-sys), so you
 can add
 
 ```toml
@@ -33,3 +35,6 @@ extern crate libffi_sys;
 ```
 
 to your crate root.
+
+If you clone from github, be sure to `clone --recursive` to get the C
+libffi.
