@@ -21,6 +21,7 @@ fn main() {
         .join("libffi-3.2.1")
         .join("include");
     let libdir = Path::new(&prefix).join("lib");
+    let libdir64 = Path::new(&prefix).join("lib64");
 
     fn run_command(which: &'static str, cmd: &mut Command) {
         assert!(cmd.status().expect(which).success(), which);
@@ -74,4 +75,5 @@ fn main() {
     // Cargo linking directives
     println!("cargo:rustc-link-lib=static=ffi");
     println!("cargo:rustc-link-search={}", libdir.display());
+    println!("cargo:rustc-link-search={}", libdir64.display());
 }
