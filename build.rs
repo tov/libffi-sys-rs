@@ -61,7 +61,7 @@ fn main() {
     builder.header(include_file.display().to_string())
         .clang_arg(format!("-I{}", include.display()))
         .derive_default(true)
-        .blacklist_type("max_align_t")
+        .hide_type("max_align_t")
         .generate()
         .expect("
         **********
