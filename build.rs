@@ -60,9 +60,8 @@ fn main() {
     let builder = bindgen::Builder::default();
     builder.header(include_file.display().to_string())
         .clang_arg(format!("-I{}", include.display()))
-        .no_unstable_rust()
         .derive_default(true)
-        .hide_type("max_align_t")
+        .blacklist_type("max_align_t")
         .generate()
         .expect("
         **********
