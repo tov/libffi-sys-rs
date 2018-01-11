@@ -65,7 +65,11 @@ fn main() {
         .generate()
         .expect("
         **********
-        Bindgen generation failed. Please file a bug report.
+        Bindgen generation failed. 
+        Note that Bindgen requires clang to be installed. See the Bindgen documentation for more information:
+        https://rust-lang-nursery.github.io/rust-bindgen/requirements.html
+
+        If you believe this should have worked, please file a bug report.
         **********
         ")
         .write_to_file(out_file.display().to_string())
