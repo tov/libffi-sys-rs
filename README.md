@@ -12,6 +12,9 @@ by bindgen, intended as the basis for higher-level bindings, but you
 can see the [C libffi
 documentation](http://www.atmark-techno.com/~yashi/libffi.html).
 
+If you clone this repository in order to build the library, be sure to do
+a recursive clone, as we include C libffi as a submodule.
+
 See [the libffi crate](https://crates.io/crates/libffi/) for a
 higher-level API.
 
