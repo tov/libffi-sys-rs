@@ -41,3 +41,5 @@ to your crate root.
 
 If you clone from github, be sure to `clone --recursive` to get the C
 libffi.
+
+This crate supports Rust version 1.20 and later.
