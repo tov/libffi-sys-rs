@@ -1,8 +1,9 @@
 extern crate bindgen;
 extern crate make_cmd;
+extern crate pkg_config;
 
 use std::env;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::fs;
 use std::io;
@@ -12,8 +13,32 @@ use make_cmd::make;
 const LIBFFI_DIR: &'static str = "libffi";
 
 fn main() {
-    let out_dir = env::var("OUT_DIR").unwrap();
+    let include_paths = if cfg!(feature = "system") {
+        probe_and_link()
+    } else {
+        build_and_link()
+    };
+    generate_bindings(include_paths);
+}
 
+struct IncludePaths(Vec<PathBuf>);
+
+fn probe_and_link() -> IncludePaths {
+    let libffi = pkg_config::probe_library("libffi").expect("
+        **********
+        pkg-config could not find libffi. This could be because you
+        don't have pkg-config, because you don't have libffi, or because
+        they don't know about each other. If you can run `pkg-config
+        libffi --cflags` and get a reasonable result, please file a bug
+        report.
+        **********
+    ");
+
+    IncludePaths(libffi.include_paths)
+}
+
+fn build_and_link() -> IncludePaths {
+    let out_dir = env::var("OUT_DIR").unwrap();
     let build_dir = Path::new(&out_dir).join("libffi-build");
     let prefix = Path::new(&out_dir).join("libffi-root");
     let include = Path::new(&prefix)
@@ -52,14 +77,24 @@ fn main() {
                     .arg("install")
                     .current_dir(&build_dir));
 
-    // Now run bindgen.
+    // Cargo linking directives
+    println!("cargo:rustc-link-lib=static=ffi");
+    println!("cargo:rustc-link-search={}", libdir.display());
+    println!("cargo:rustc-link-search={}", libdir64.display());
 
+    IncludePaths(vec![include])
+}
+
+fn generate_bindings(include_paths: IncludePaths) {
+    let out_dir = env::var("OUT_DIR").unwrap();
     let include_file = Path::new("include").join("include_ffi.h");
     let out_file = Path::new(&out_dir).join("generated.rs");
 
-    let builder = bindgen::Builder::default();
+    let mut builder = bindgen::Builder::default();
+    for path in &include_paths.0 {
+        builder = builder.clang_arg(format!("-I{}", path.display()));
+    }
     builder.header(include_file.display().to_string())
-        .clang_arg(format!("-I{}", include.display()))
         .derive_default(true)
         .blacklist_type("max_align_t")
         .generate()
@@ -74,9 +109,4 @@ fn main() {
         ")
         .write_to_file(out_file.display().to_string())
         .expect("bindgen output");
-
-    // Cargo linking directives
-    println!("cargo:rustc-link-lib=static=ffi");
-    println!("cargo:rustc-link-search={}", libdir.display());
-    println!("cargo:rustc-link-search={}", libdir64.display());
 }
