@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [0.6.2] - 2018-08-21
 
+### Added
+- Feature `system` probes for system libffi instead of downloading and
+  bulding our own.
+
 ## [0.6.1] - 2018-05-30
 
 ### Added
