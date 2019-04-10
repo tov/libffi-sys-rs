@@ -68,7 +68,8 @@ install:
   - set target=%cpu%-pc-windows-%toolchain%
   - rustup-init.exe --default-host %target% --default-toolchain %channel% -y
   - set PATH=%USERPROFILE%\.cargo\bin;%PATH%
-  - pacman --noconfirm -S automake autoconf texinfo mingw-w64-%cpu%-clang libtool
+  - if %toolchain%==gnu (set PATH=C:\msys64\usr\bin;%PATH%)
+  - if %toolchain%==gnu (pacman --noconfirm -S automake autoconf texinfo mingw-w64-%cpu%-clang libtool)
   - rustc -Vv
   - cargo -V
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -79,5 +80,7 @@ cache:
   - compiler\vendor
 
 test_script:
+  - if %toolchain%==gnu (set PATH=C:\msys64\usr\bin;%PATH%)
+  - if %toolchain%==gnu (set MSYSTEM=MINGW64)
   - cargo build --verbose
   - cargo test
