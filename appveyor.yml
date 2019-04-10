@@ -9,22 +9,66 @@ platform:
 notifications:
   - provider: Email
     on_build_success: false
-    on_build_failure: false
+    on_build_failure: true
     on_build_status_changed: false
 
 environment:
   matrix:
-    - TARGET: x86_64-pc-windows-gnu
-      CHANNEL: nightly
-    - TARGET: x86_64-pc-windows-gnu
-      CHANNEL: stable
+    - cpu: x86_64
+      toolchain: gnu
+      channel: nightly
+    - cpu: i686
+      toolchain: gnu
+      channel: nightly
+    - cpu: x86_64
+      toolchain: msvc
+      channel: nightly
+    - cpu: i686
+      toolchain: msvc
+      channel: nightly
+    - cpu: x86_64
+      toolchain: gnu
+      channel: stable
+    - cpu: i686
+      toolchain: gnu
+      channel: stable
+    - cpu: x86_64
+      toolchain: msvc
+      channel: stable
+    - cpu: i686
+      toolchain: msvc
+      channel: stable
+    - cpu: x86_64
+      toolchain: gnu
+      channel: beta
+    - cpu: i686
+      toolchain: gnu
+      channel: beta
+    - cpu: x86_64
+      toolchain: msvc
+      channel: beta
+    - cpu: i686
+      toolchain: msvc
+      channel: beta
+    - cpu: x86_64
+      toolchain: gnu
+      channel: 1.30.0
+    - cpu: i686
+      toolchain: gnu
+      channel: 1.30.0
+    - cpu: x86_64
+      toolchain: msvc
+      channel: 1.30.0
+    - cpu: i686
+      toolchain: msvc
+      channel: 1.30.0
 
 install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs
-  - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
-  - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
-  - set PATH=C:\msys64\usr\bin;%PATH%
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S automake autoconf texinfo mingw-w64-x86_64-clang libtool"
+  - set target=%cpu%-pc-windows-%toolchain%
+  - rustup-init.exe --default-host %target% --default-toolchain %channel% -y
+  - set PATH=%USERPROFILE%\.cargo\bin;%PATH%
+  - pacman --noconfirm -S automake autoconf texinfo mingw-w64-%cpu%-clang libtool
   - rustc -Vv
   - cargo -V
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -35,5 +79,5 @@ cache:
   - compiler\vendor
 
 test_script:
-  - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo build --verbose'
-  - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo test'
+  - cargo build --verbose
+  - cargo test
