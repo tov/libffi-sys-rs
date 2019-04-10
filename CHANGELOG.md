@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
+## [Unreleased]
+
+### Changed
+- Updated version of `bindgen` build dependency to `^0.49` from
+  `0.31.3`. (As a consequence, we now require rustc 1.30.0 or later.)
+
 ## [0.6.3] - 2018-10-29
 
 ### Added
