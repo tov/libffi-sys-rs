@@ -32,7 +32,7 @@
 //!
 //! to your crate root.
 //!
-//! This crate supports Rust version 1.30 and later.
+//! This crate supports Rust version 1.31 and later.
 
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
