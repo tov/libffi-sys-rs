@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog] and this project adheres to
 ## [Unreleased]
 
 ### Fixed
-- Oldest supported rustc version now documented to be 1.31.
+- Oldest supported rustc version now documented to be 1.32.
 
 ## [0.7.0] - 2019-05-12
 
