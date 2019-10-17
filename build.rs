@@ -59,7 +59,7 @@ fn build_and_link() -> IncludePaths {
     }
     run_command("Copying libffi into the build directory",
                 Command::new("cp")
-                    .arg("-a")
+                    .arg("-R")
                     .arg(LIBFFI_DIR)
                     .arg(&build_dir));
 
