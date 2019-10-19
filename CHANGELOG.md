@@ -10,8 +10,9 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
-### Fixed
-- Oldest supported rustc version now documented to be 1.32.
+### Updated
+- Updated version of `bindgen` build dependency to `^0.51` from
+  `0.49`. (As a consequence, we now require rustc 1.32.0 or later.)
 
 ## [0.7.0] - 2019-05-12
 
