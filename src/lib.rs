@@ -24,13 +24,7 @@
 //! libffi-sys = "0.7.0"
 //! ```
 //!
-//! to your `Cargo.toml` and
-//!
-//! ```rust
-//! extern crate libffi_sys;
-//! ```
-//!
-//! to your crate root.
+//! to your `Cargo.toml`.
 //!
 //! This crate supports Rust version 1.32 and later.
 

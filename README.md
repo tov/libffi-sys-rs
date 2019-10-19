@@ -32,13 +32,7 @@ can add
 libffi-sys = "0.7.0"
 ```
 
-to your `Cargo.toml` and
-
-```rust
-extern crate libffi_sys;
-```
-
-to your crate root.
+to your `Cargo.toml`.
 
 If you clone from github, be sure to `clone --recursive` to get the C
 libffi.
