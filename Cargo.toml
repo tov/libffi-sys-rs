@@ -20,3 +20,5 @@ pkg-config = "0.3.13"
 [features]
 system = []
 
+[package.metadata.docs.rs]
+features = ["system"]
