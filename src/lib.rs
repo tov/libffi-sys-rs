@@ -13,18 +13,29 @@
 //!
 //! # Usage
 //!
-//! Building libffi-sys will build the libffi C library [from
-//! github](https://github.com/libffi/libffi), which requires that you have
-//! a working make, C compiler, automake, autoconf, and texinfo first.
-//! It’s [on crates.io](https://crates.io/crates/libffi-sys), so you
-//! can add
+//! `libffi-sys` can either build its own copy of the libffi C library [from
+//! github](https://github.com/libffi/libffi) or it can link against your
+//! system’s C libffi. By default it builds its own because many systems
+//! ship with an old C libffi; this requires that you have a working make,
+//! C compiler, automake, autoconf, and texinfo first. If your system libffi
+//! is up-to-date (v3.2.1 as of October 2019), you can instead enable the
+//! `system` feature flag to use that. If you want this crate to build
+//! a C libffi for you, add
 //!
 //! ```toml
 //! [dependencies]
 //! libffi-sys = "0.7.0"
 //! ```
 //!
-//! to your `Cargo.toml`.
+//! to your `Cargo.toml`. If you want to use your system C libffi, then
+//!
+//! ```toml
+//! [dependencies.libffi-sys]
+//! version = "0.7.0"
+//! features = ["system"]
+//! ```
+//!
+//! to your `Cargo.toml` instead.
 //!
 //! This crate supports Rust version 1.32 and later.
 
