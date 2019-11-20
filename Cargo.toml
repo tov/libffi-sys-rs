@@ -13,7 +13,7 @@ keywords = ["ffi", "libffi", "closure", "c"]
 [dependencies]
 
 [build-dependencies]
-bindgen = "^0.51"
+bindgen = "^0.52"
 make-cmd = "0.1"
 pkg-config = "0.3.13"
 
