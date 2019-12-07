@@ -103,6 +103,7 @@ fn configure_libffi(prefix: PathBuf, build_dir: &Path) {
 
     command.arg("configure")
         .arg("--with-pic")
+        .arg("--disable-docs")
         .current_dir(&build_dir);
 
     if cfg!(windows) {
