@@ -45,10 +45,7 @@ fn build_and_link() -> IncludePaths {
     let out_dir = env::var("OUT_DIR").unwrap();
     let build_dir = Path::new(&out_dir).join("libffi-build");
     let prefix = Path::new(&out_dir).join("libffi-root");
-    let include = Path::new(&prefix)
-        .join("lib")
-        .join("libffi-3.2.1")
-        .join("include");
+    let include = Path::new(&prefix).join("include");
     let libdir = Path::new(&prefix).join("lib");
     let libdir64 = Path::new(&prefix).join("lib64");
 
@@ -106,6 +103,7 @@ fn configure_libffi(prefix: PathBuf, build_dir: &Path) {
 
     command.arg("configure")
         .arg("--with-pic")
+        .arg("--disable-docs")
         .current_dir(&build_dir);
 
     if cfg!(windows) {
