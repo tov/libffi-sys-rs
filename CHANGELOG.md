@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
+## [Unreleased]
+
+### Updated
+- Updated version of automatically-built C libffi to 3.3.
+
+### Changed
+- No longer builds C libffi documentation (and thus we no longer depend on
+  Texinfo.
+
 ## [0.8.0] - 2019-10-19
 
 ### Updated
