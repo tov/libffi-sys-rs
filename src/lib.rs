@@ -17,8 +17,8 @@
 //! github](https://github.com/libffi/libffi) or it can link against your
 //! system’s C libffi. By default it builds its own because many systems
 //! ship with an old C libffi; this requires that you have a working make,
-//! C compiler, automake, autoconf, and texinfo first. If your system libffi
-//! is up-to-date (v3.2.1 as of October 2019), you can instead enable the
+//! C compiler, automake, and autoconf first. If your system libffi
+//! is new enough (v3.2.1 as of October 2019), you can instead enable the
 //! `system` feature flag to use that. If you want this crate to build
 //! a C libffi for you, add
 //!
