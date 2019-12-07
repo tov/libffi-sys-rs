@@ -79,6 +79,14 @@ fn build_and_link() -> IncludePaths {
 }
 
 fn autogen(build_dir: &Path) {
+    assert!(build_dir.join("autogen.sh").exists(), "
+        **********
+        build.rs could not find autogen.sh when attempting to build C
+        libffi. Either init and update the libffi submodule or pass the
+        \"system\" feature to Cargo to use your system’s libffi.
+        **********
+        ");
+
     let mut command = Command::new("sh");
 
     command

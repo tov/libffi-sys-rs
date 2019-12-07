@@ -47,23 +47,6 @@ to your `Cargo.toml` instead.
 
 This crate supports Rust version 1.32 and later.
 
-## Help
-
-The message below means that `build.rs` is trying to build the C libffi in the
-`libffi` submodule, but the submodule isn’t checked out. Either initialize and
-update the submodule or enable the `system` feature flag.
-
-```
-error: failed to run custom build command for `libffi-sys v0.7.1-alpha.0 (/Users/tov/projects/libffi-sys-rs)`
-
-Caused by:
-  process didn't exit successfully: `/Users/tov/projects/libffi-sys-rs/target/debug/build/libffi-sys-0fd86a57f553b770/build-script-build` (exit code: 101)
---- stderr
-sh: autogen.sh: No such file or directory
-thread 'main' panicked at 'Generating configure', build.rs:41:5
-note: Run with `RUST_BACKTRACE=1` environment variable to display a backtrace.
-```
-
 
 [the `libffi` crate]: https://crates.io/crates/libffi/
 
