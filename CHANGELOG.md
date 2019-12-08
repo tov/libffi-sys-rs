@@ -10,21 +10,19 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
-### Updated
+### Changed
 - Updated Rust edition to 2018.
 
 ## [0.9.0] - 2019-12-07
 
-### Updated
-- Updated version of automatically-built C libffi to 3.3.
-
 ### Changed
+- Updated version of automatically-built C libffi to 3.3.
 - No longer builds C libffi documentation (and thus we no longer depend on
   Texinfo.
 
 ## [0.8.0] - 2019-10-19
 
-### Updated
+### Changed
 - Updated version of `bindgen` build dependency to `^0.51` from
   `0.49`. (As a consequence, we now require rustc 1.32.0 or later.)
 
