@@ -12,7 +12,13 @@ fn main() {
     let include_paths = if cfg!(feature = "system") {
         probe_and_link()
     } else {
-        build_and_link()
+        let target = env::var("TARGET").unwrap();
+
+        if target.contains("msvc") {
+            build_msvc()
+        } else {
+            build_and_link()
+        }
     };
     generate_bindings(include_paths);
 }
@@ -35,6 +41,53 @@ fn probe_and_link() -> IncludePaths {
 
 fn run_command(which: &'static str, cmd: &mut Command) {
     assert!(cmd.status().expect(which).success(), which);
+}
+
+fn build_msvc() -> IncludePaths {
+    let target = env::var("TARGET").unwrap();
+    let dst = PathBuf::from(env::var_os("OUT_DIR").unwrap());
+
+    let build = dst.join("build");
+    let _ = fs::remove_dir_all(&build);
+
+    let build_libffi = build.join("libffi");
+    copy_recursive(Path::new("libffi"), &build_libffi);
+
+    let build_msvc = build.join("msvc_build");
+    copy_recursive(Path::new("msvc_build"), &build_msvc);
+
+    let mut msbuild =
+        cc::windows_registry::find(&target, "msbuild").expect("needs msbuild installed");
+
+    run_command(
+        "Run msbuild",
+        msbuild
+            .current_dir(&build_msvc)
+            .arg("libffi.sln")
+            .arg(&format!("/p:Configuration={}", "Debug"))
+            .arg(&format!("/p:PlatformToolset={}", "v142")),
+    );
+
+    let out = build_msvc.join("x64").join("Debug"); 
+
+    println!("cargo:rustc-link-lib=static=libffi");
+    println!("cargo:rustc-link-search={}", out.display());
+
+    IncludePaths(vec![build_msvc.join("include"), build_libffi.join("src").join("x86")])
+}
+
+fn copy_recursive(src: &Path, dst: &Path) {
+    fs::create_dir_all(dst).expect("Could not create directory");
+
+    for e in src.read_dir().expect("Could not read directory").map(|e| e.expect("Could not get file entry")) {
+        let src = e.path();
+        let dst = dst.join(e.file_name());
+        if e.file_type().expect("Could not get file type").is_dir() {
+            copy_recursive(&src, &dst);
+        } else {
+            fs::copy(&src, &dst).expect("Could not copy file");
+        }
+    }
 }
 
 fn build_and_link() -> IncludePaths {

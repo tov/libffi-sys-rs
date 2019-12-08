@@ -1,5 +1,5 @@
 ---
-image: Visual Studio 2017
+image: Visual Studio 2019
 build: false
 version: '{build}'
 
@@ -17,6 +17,10 @@ environment:
     - TARGET: x86_64-pc-windows-gnu
       CHANNEL: nightly
     - TARGET: x86_64-pc-windows-gnu
+      CHANNEL: stable
+    - TARGET: x86_64-pc-windows-msvc
+      CHANNEL: nightly
+    - TARGET: x86_64-pc-windows-msvc
       CHANNEL: stable
 
 install:
@@ -37,3 +41,20 @@ cache:
 test_script:
   - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo build --verbose'
   - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo test'
+
+for:
+  -
+    matrix:
+      only:
+        - TARGET: x86_64-pc-windows-msvc
+    install:
+      - curl -sSf -o rustup-init.exe https://win.rustup.rs
+      - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
+      - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
+      - rustc -Vv
+      - cargo -V
+      - cd %APPVEYOR_BUILD_FOLDER%
+      - git submodule update --init --recursive
+    test_script:
+      - cargo build --verbose
+      - cargo test

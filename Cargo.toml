@@ -17,6 +17,7 @@ edition = "2018"
 bindgen = "^0.52"
 make-cmd = "0.1"
 pkg-config = "0.3.13"
+cc = "1.0.48"
 
 [features]
 system = []
