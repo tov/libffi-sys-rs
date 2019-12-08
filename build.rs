@@ -1,7 +1,3 @@
-extern crate bindgen;
-extern crate make_cmd;
-extern crate pkg_config;
-
 use std::env;
 use std::path::{Path, PathBuf};
 use std::process::Command;
