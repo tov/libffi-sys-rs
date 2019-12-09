@@ -24,9 +24,9 @@ environment:
       CHANNEL: nightly
     - TARGET: x86_64-pc-windows-msvc
       CHANNEL: stable
-    - TARGET: stable-i686-pc-windows-msvc
+    - TARGET: i686-pc-windows-msvc
       CHANNEL: nightly
-    - TARGET: stable-i686-pc-windows-msvc
+    - TARGET: i686-pc-windows-msvc
       CHANNEL: stable
 
 install:
