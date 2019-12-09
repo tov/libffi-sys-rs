@@ -1,5 +1,7 @@
 ---
-image: Visual Studio 2019
+image: 
+  - Visual Studio 2017
+  - Visual Studio 2019
 build: false
 version: '{build}'
 
@@ -22,6 +24,12 @@ environment:
       CHANNEL: nightly
     - TARGET: x86_64-pc-windows-msvc
       CHANNEL: stable
+    - TARGET: stable-i686-pc-windows-msvc
+      CHANNEL: nightly
+    - TARGET: stable-i686-pc-windows-msvc
+      CHANNEL: stable
+
+      
 
 install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs
