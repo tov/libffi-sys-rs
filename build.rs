@@ -89,29 +89,27 @@ fn build_and_link() -> IncludePaths {
         "libffi/src/x86",
     ];
 
-    let asm_file = write_asm(&include_dirs, &target, is_x64);
+    let asm_path = pre_process_asm(&include_dirs, &target, is_x64);
 
-    let mut build_cmd = cc::Build::new();
+    let mut build = cc::Build::new();
 
     for inc in &include_dirs {
-        build_cmd.include(inc);
+        build.include(inc);
     }
 
     if is_x64 {
-        build_cmd.file("libffi/src/x86/ffiw64.c");
+        build.file("libffi/src/x86/ffiw64.c");
     }
-
-    build_cmd
+    
+    build
         .warnings(false)
         .file("libffi/src/closures.c")
         .file("libffi/src/prep_cif.c")
         .file("libffi/src/raw_api.c")
         .file("libffi/src/types.c")
         .file("libffi/src/x86/ffi.c")
-        .file(asm_file)
-        // .define("X86_WIN64", None)
+        .file(asm_path)
         .define("WIN32", None)
-        .define("NDEBUG", None)
         .define("_LIB", None)
         .define("FFI_BUILDING", None)
         .compile("libffi");
@@ -125,25 +123,25 @@ fn build_and_link() -> IncludePaths {
 }
 
 #[cfg(target_env = "msvc")]
-fn write_asm(include_dirs: &Vec<&str>, target: &str, is_x64: bool) -> String {
-    let file = if is_x64 { "win64_intel" } else { "sysv_intel" };
+fn pre_process_asm(include_dirs: &Vec<&str>, target: &str, is_x64: bool) -> String {
+    let file_name = if is_x64 { "win64_intel" } else { "sysv_intel" };
 
-    let mut asm_cmd =
+    let mut cmd =
         cc::windows_registry::find(&target, "cl.exe").expect("Could not locate cl.exe");
-    asm_cmd.env("INCLUDE", include_dirs.join(";"));
+    cmd.env("INCLUDE", include_dirs.join(";"));
 
-    asm_cmd.arg("/EP");
-    asm_cmd.arg(format!("libffi/src/x86/{}.S", file));
+    cmd.arg("/EP");
+    cmd.arg(format!("libffi/src/x86/{}.S", file_name));
 
-    let out_file = format!("libffi/src/x86/{}.asm", file);
+    let out_path = format!("libffi/src/x86/{}.asm", file_name);
     let asm_file =
-        fs::File::create(&out_file).unwrap_or_else(|_| panic!("Could not write {}", &out_file));
+        fs::File::create(&out_path).unwrap_or_else(|_| panic!("Could not write {}", &out_path));
 
-    asm_cmd.stdout(asm_file);
+    cmd.stdout(asm_file);
 
-    run_command("Pre-process ASM", &mut asm_cmd);
+    run_command("Pre-process ASM", &mut cmd);
 
-    out_file
+    out_path
 }
 
 #[cfg(not(target_env = "msvc"))]

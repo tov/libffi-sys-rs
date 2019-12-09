@@ -5,6 +5,8 @@ image:
 build: false
 version: '{build}'
 
+platform: x64
+
 notifications:
   - provider: Email
     on_build_success: false
@@ -13,23 +15,13 @@ notifications:
 
 environment:
   matrix:
-    - platform: x64
-      TARGET: x86_64-pc-windows-gnu
+    - TARGET: x86_64-pc-windows-gnu
       CHANNEL: nightly
-    - platform: x64
-      TARGET: x86_64-pc-windows-gnu
+    - TARGET: x86_64-pc-windows-gnu
       CHANNEL: stable
-    - platform: x64
-      TARGET: x86_64-pc-windows-msvc
+    - TARGET: x86_64-pc-windows-msvc
       CHANNEL: nightly
-    - platform: x64
-      TARGET: x86_64-pc-windows-msvc
-      CHANNEL: stable
-    - platform: x86
-      TARGET: i686-pc-windows-msvc
-      CHANNEL: nightly
-    - platform: x86
-      TARGET: i686-pc-windows-msvc
+    - TARGET: x86_64-pc-windows-msvc
       CHANNEL: stable
 
 install:
