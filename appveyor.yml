@@ -1,10 +1,11 @@
 ---
-image: Visual Studio 2017
+image: 
+  - Visual Studio 2017
+  - Visual Studio 2019
 build: false
 version: '{build}'
 
-platform:
-  - x64
+platform: x64
 
 notifications:
   - provider: Email
@@ -18,13 +19,15 @@ environment:
       CHANNEL: nightly
     - TARGET: x86_64-pc-windows-gnu
       CHANNEL: stable
+    - TARGET: x86_64-pc-windows-msvc
+      CHANNEL: nightly
+    - TARGET: x86_64-pc-windows-msvc
+      CHANNEL: stable
 
 install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs
   - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
   - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
-  - set PATH=C:\msys64\usr\bin;%PATH%
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S automake autoconf mingw-w64-x86_64-clang libtool"
   - rustc -Vv
   - cargo -V
   - cd %APPVEYOR_BUILD_FOLDER%
@@ -35,5 +38,24 @@ cache:
   - compiler\vendor
 
 test_script:
-  - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo build --verbose'
-  - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo test'
+  - cargo build --verbose
+  - cargo test
+
+for:
+  -
+    matrix:
+      only:
+        - TARGET: x86_64-pc-windows-gnu
+    install:
+      - curl -sSf -o rustup-init.exe https://win.rustup.rs
+      - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
+      - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
+      - set PATH=C:\msys64\usr\bin;%PATH%
+      - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S automake autoconf mingw-w64-x86_64-clang libtool"
+      - rustc -Vv
+      - cargo -V
+      - cd %APPVEYOR_BUILD_FOLDER%
+      - git submodule update --init --recursive
+    test_script:
+      - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo build --verbose'
+      - C:\msys64\usr\bin\env MSYSTEM=MINGW64 C:\msys64\usr\bin\bash -lc 'cd $APPVEYOR_BUILD_FOLDER; cargo test'

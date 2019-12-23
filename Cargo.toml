@@ -15,7 +15,6 @@ edition = "2018"
 
 [build-dependencies]
 bindgen = "^0.52"
-make-cmd = "0.1"
 pkg-config = "0.3.13"
 
 [features]
@@ -23,3 +22,9 @@ system = []
 
 [package.metadata.docs.rs]
 features = ["system"]
+
+[target.'cfg(target_env = "msvc")'.build-dependencies]
+cc = "1.0.48"
+
+[target.'cfg(not(target_env = "msvc"))'.build-dependencies]
+make-cmd = "0.1"

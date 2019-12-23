@@ -1,12 +1,7 @@
 use std::env;
+use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::fs;
-use std::io;
-
-use make_cmd::make;
-
-const LIBFFI_DIR: &'static str = "libffi";
 
 fn main() {
     let include_paths = if cfg!(feature = "system") {
@@ -14,13 +9,15 @@ fn main() {
     } else {
         build_and_link()
     };
+
     generate_bindings(include_paths);
 }
 
 struct IncludePaths(Vec<PathBuf>);
 
 fn probe_and_link() -> IncludePaths {
-    let libffi = pkg_config::probe_library("libffi").expect("
+    let libffi = pkg_config::probe_library("libffi").expect(
+        "
         **********
         pkg-config could not find libffi. This could be because you
         don't have pkg-config, because you don't have libffi, or because
@@ -28,15 +25,19 @@ fn probe_and_link() -> IncludePaths {
         libffi --cflags` and get a reasonable result, please file a bug
         report.
         **********
-    ");
+    ",
+    );
 
     IncludePaths(libffi.include_paths)
 }
 
 fn run_command(which: &'static str, cmd: &mut Command) {
+    println!("{:?}", cmd);
+
     assert!(cmd.status().expect(which).success(), which);
 }
 
+#[cfg(not(target_env = "msvc"))]
 fn build_and_link() -> IncludePaths {
     let out_dir = env::var("OUT_DIR").unwrap();
     let build_dir = Path::new(&out_dir).join("libffi-build");
@@ -47,24 +48,26 @@ fn build_and_link() -> IncludePaths {
 
     // Copy LIBFFI_DIR into build_dir to avoid an unnecessary build
     if let Err(e) = fs::remove_dir_all(&build_dir) {
-        assert!(e.kind() == io::ErrorKind::NotFound,
-            "can't remove the build directory: {}", e);
+        assert!(
+            e.kind() == std::io::ErrorKind::NotFound,
+            "can't remove the build directory: {}",
+            e
+        );
     }
-    run_command("Copying libffi into the build directory",
-                Command::new("cp")
-                    .arg("-R")
-                    .arg(LIBFFI_DIR)
-                    .arg(&build_dir));
+    run_command(
+        "Copying libffi into the build directory",
+        Command::new("cp").arg("-R").arg("libffi").arg(&build_dir),
+    );
 
     // Generate configure, run configure, make, make install
     autogen(&build_dir);
 
     configure_libffi(prefix, &build_dir);
 
-    run_command("Building libffi",
-                make()
-                    .arg("install")
-                    .current_dir(&build_dir));
+    run_command(
+        "Building libffi",
+        make_cmd::make().arg("install").current_dir(&build_dir),
+    );
 
     // Cargo linking directives
     println!("cargo:rustc-link-lib=static=ffi");
@@ -74,38 +77,107 @@ fn build_and_link() -> IncludePaths {
     IncludePaths(vec![include])
 }
 
+#[cfg(target_env = "msvc")]
+fn build_and_link() -> IncludePaths {
+    let target = env::var("TARGET").unwrap();
+    let is_x64 = target.contains("x86_64");
+
+    let include_dirs = vec![
+        "libffi",
+        "libffi/include",
+        "msvc",
+        "libffi/src/x86",
+    ];
+
+    let asm_path = pre_process_asm(&include_dirs, &target, is_x64);
+
+    let mut build = cc::Build::new();
+
+    for inc in &include_dirs {
+        build.include(inc);
+    }
+
+    if is_x64 {
+        build.file("libffi/src/x86/ffiw64.c");
+    }
+    
+    build
+        .warnings(false)
+        .file("libffi/src/closures.c")
+        .file("libffi/src/prep_cif.c")
+        .file("libffi/src/raw_api.c")
+        .file("libffi/src/types.c")
+        .file("libffi/src/x86/ffi.c")
+        .file(asm_path)
+        .define("WIN32", None)
+        .define("_LIB", None)
+        .define("FFI_BUILDING", None)
+        .compile("libffi");
+
+    IncludePaths(
+        include_dirs
+            .iter()
+            .map(|p| Path::new(p).to_path_buf())
+            .collect(),
+    )
+}
+
+#[cfg(target_env = "msvc")]
+fn pre_process_asm(include_dirs: &Vec<&str>, target: &str, is_x64: bool) -> String {
+    let file_name = if is_x64 { "win64_intel" } else { "sysv_intel" };
+
+    let mut cmd =
+        cc::windows_registry::find(&target, "cl.exe").expect("Could not locate cl.exe");
+    cmd.env("INCLUDE", include_dirs.join(";"));
+
+    cmd.arg("/EP");
+    cmd.arg(format!("libffi/src/x86/{}.S", file_name));
+
+    let out_path = format!("libffi/src/x86/{}.asm", file_name);
+    let asm_file =
+        fs::File::create(&out_path).unwrap_or_else(|_| panic!("Could not write {}", &out_path));
+
+    cmd.stdout(asm_file);
+
+    run_command("Pre-process ASM", &mut cmd);
+
+    out_path
+}
+
+#[cfg(not(target_env = "msvc"))]
 fn autogen(build_dir: &Path) {
-    assert!(build_dir.join("autogen.sh").exists(), "
+    assert!(
+        build_dir.join("autogen.sh").exists(),
+        "
         **********
         build.rs could not find autogen.sh when attempting to build C
         libffi. Either init and update the libffi submodule or pass the
         \"system\" feature to Cargo to use your system’s libffi.
         **********
-        ");
+        "
+    );
 
     let mut command = Command::new("sh");
 
-    command
-        .arg("autogen.sh")
-        .current_dir(&build_dir);
+    command.arg("autogen.sh").current_dir(&build_dir);
 
     if cfg!(windows) {
         // When building in MSYS2, not clearing the environment variables first
         // results in `configure` being generated incorrectly. By clearing the
         // variables first, then restoring PATH, we can ensure the correct file
         // is generated.
-        command
-            .env_clear()
-            .env("PATH", env::var("PATH").unwrap());
+        command.env_clear().env("PATH", env::var("PATH").unwrap());
     }
 
     run_command("Generating configure", &mut command);
 }
 
+#[cfg(not(target_env = "msvc"))]
 fn configure_libffi(prefix: PathBuf, build_dir: &Path) {
     let mut command = Command::new("sh");
 
-    command.arg("configure")
+    command
+        .arg("configure")
         .arg("--with-pic")
         .arg("--disable-docs")
         .current_dir(&build_dir);
@@ -127,13 +199,9 @@ fn configure_libffi(prefix: PathBuf, build_dir: &Path) {
 
         msys_prefix.insert(0, '/');
 
-        command
-            .arg("--prefix")
-            .arg(msys_prefix);
+        command.arg("--prefix").arg(msys_prefix);
     } else {
-        command
-            .arg("--prefix")
-            .arg(prefix);
+        command.arg("--prefix").arg(prefix);
     }
 
     run_command("Configuring libffi", &mut command);
