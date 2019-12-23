@@ -3,7 +3,7 @@ use crate::common::*;
 const INCLUDE_DIRS: &[&str] = &[
     "libffi",
     "libffi/include",
-    "msvc",
+    "include/msvc",
     "libffi/src/x86",
 ];
 
