@@ -9,37 +9,44 @@ platform: x64
 
 notifications:
   - provider: Email
+    to:
+      - jesse.tov@gmail.com
     on_build_success: false
     on_build_failure: true
     on_build_status_changed: false
 
 environment:
   matrix:
-    - TARGET: x86_64-pc-windows-msvc
-      CHANNEL: 1.32.0
-    - TARGET: x86_64-pc-windows-gnu
-      CHANNEL: 1.32.0
-    - TARGET: x86_64-pc-windows-msvc
-      CHANNEL: stable
-    - TARGET: x86_64-pc-windows-gnu
-      CHANNEL: stable
-    - TARGET: x86_64-pc-windows-msvc
-      CHANNEL: beta
-    - TARGET: x86_64-pc-windows-gnu
-      CHANNEL: beta
-    - TARGET: x86_64-pc-windows-msvc
-      CHANNEL: nightly
-    - TARGET: x86_64-pc-windows-gnu
-      CHANNEL: nightly
+    - target: x86_64-pc-windows-msvc
+      channel: 1.32.0
+    - target: x86_64-pc-windows-gnu
+      channel: 1.32.0
+    - target: x86_64-pc-windows-msvc
+      channel: stable
+    - target: x86_64-pc-windows-gnu
+      channel: stable
+    - target: x86_64-pc-windows-msvc
+      channel: beta
+    - target: x86_64-pc-windows-gnu
+      channel: beta
+    - target: x86_64-pc-windows-msvc
+      channel: nightly
+    - target: x86_64-pc-windows-gnu
+      channel: nightly
 
 matrix:
   allow_failures:
-    - environment:
-        CHANNEL: nightly
+    - target: x86_64-pc-windows-msvc
+      channel: nightly
+    - target: x86_64-pc-windows-gnu
+      channel: nightly
+    #  This one shouldn't fail, but I don't know why it's failing yet:
+    - target: x86_64-pc-windows-gnu
+      channel: beta
 
 install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs
-  - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
+  - rustup-init.exe --default-host %target% --default-toolchain %channel% -y
   - set PATH=C:\Users\appveyor\.cargo\bin;%PATH%
   - rustc -Vv
   - cargo -V
@@ -53,10 +60,10 @@ test_script:
 for:
   - matrix:
       only:
-        - TARGET: x86_64-pc-windows-gnu
+        - target: x86_64-pc-windows-gnu
     install:
       - curl -sSf -o rustup-init.exe https://win.rustup.rs
-      - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
+      - rustup-init.exe --default-host %target% --default-toolchain %channel% -y
       - set PATH=C:\msys64\usr\bin;C:\Users\appveyor\.cargo\bin;%PATH%
       - bash -lc "pacman --noconfirm -S automake autoconf mingw-w64-x86_64-clang libtool"
       - rustc -Vv
