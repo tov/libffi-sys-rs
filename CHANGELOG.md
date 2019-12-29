@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
+### Added
+- Windows support (GNU or MSVC toolchain).
+
 ### Changed
 - Updated Rust edition to 2018.
 
