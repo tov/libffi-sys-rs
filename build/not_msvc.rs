@@ -9,8 +9,12 @@ pub fn build_and_link() {
 
     // Copy LIBFFI_DIR into build_dir to avoid an unnecessary build
     if let Err(e) = fs::remove_dir_all(&build_dir) {
-        assert_eq!(e.kind(), std::io::ErrorKind::NotFound,
-                   "can't remove the build directory: {}", e);
+        assert_eq!(
+            e.kind(),
+            std::io::ErrorKind::NotFound,
+            "can't remove the build directory: {}",
+            e
+        );
     }
     run_command(
         "Copying libffi into the build directory",
