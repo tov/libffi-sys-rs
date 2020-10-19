@@ -11,14 +11,9 @@ license = "MIT/Apache-2.0"
 keywords = ["ffi", "libffi", "closure", "c"]
 edition = "2018"
 
-[dependencies]
-
-[build-dependencies]
-bindgen = "^0.52"
-pkg-config = "0.3.13"
-
 [features]
 system = []
+complex = []
 
 [package.metadata.docs.rs]
 features = ["system"]

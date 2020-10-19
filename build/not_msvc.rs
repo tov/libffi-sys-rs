@@ -1,10 +1,9 @@
 use crate::common::*;
 
-pub fn build_and_link() -> IncludePaths {
+pub fn build_and_link() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let build_dir = Path::new(&out_dir).join("libffi-build");
     let prefix = Path::new(&out_dir).join("libffi-root");
-    let include = Path::new(&prefix).join("include");
     let libdir = Path::new(&prefix).join("lib");
     let libdir64 = Path::new(&prefix).join("lib64");
 
@@ -32,8 +31,10 @@ pub fn build_and_link() -> IncludePaths {
     println!("cargo:rustc-link-lib=static=ffi");
     println!("cargo:rustc-link-search={}", libdir.display());
     println!("cargo:rustc-link-search={}", libdir64.display());
+}
 
-    IncludePaths(vec![include])
+pub fn probe_and_link() {
+    println!("cargo:rustc-link-lib=dylib=ffi");
 }
 
 pub fn configure_libffi(prefix: PathBuf, build_dir: &Path) {
