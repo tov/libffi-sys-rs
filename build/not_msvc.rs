@@ -28,7 +28,10 @@ pub fn build_and_link() {
 
     run_command(
         "Building libffi",
-        make_cmd::make().arg("install").current_dir(&build_dir),
+        make_cmd::make()
+            .env_remove("DESTDIR")
+            .arg("install")
+            .current_dir(&build_dir),
     );
 
     // Cargo linking directives
